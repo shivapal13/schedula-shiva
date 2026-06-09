@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DoctorController } from './doctor.controller';
 import { DoctorService } from './doctor.service';
-
+import { DoctorDiscoveryController } from './doctor-discovery.controller';
 import { DoctorProfile } from './doctor.entity';
 import { User } from '../users/entity/user.entities';
 
@@ -14,7 +14,10 @@ import { User } from '../users/entity/user.entities';
       User,
     ]),
   ],
-  controllers: [DoctorController],
+ controllers: [
+  DoctorController,
+  DoctorDiscoveryController
+],
   providers: [DoctorService],
 })
 export class DoctorModule {}

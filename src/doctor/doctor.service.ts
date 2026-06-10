@@ -1,7 +1,8 @@
 import {
   Injectable,
   ConflictException,
-  NotFoundException
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -73,4 +74,75 @@ export class DoctorService {
 
     return this.doctorRepo.save(profile);
   }
+async findAll(filters: any) {
+  const {
+    page = 1,
+    limit = 10,
+    search,
+    specialization,
+  } = filters;
+
+  if (page < 1 || limit < 1) {
+    throw new BadRequestException(
+      'Invalid pagination values',
+    );
+  }
+
+  const query =
+    this.doctorRepo.createQueryBuilder(
+      'doctor',
+    );
+
+  if (search) {
+    query.andWhere(
+      'LOWER(doctor.fullName) LIKE LOWER(:search)',
+      {
+        search: `%${search}%`,
+      },
+    );
+  }
+
+  if (specialization) {
+    query.andWhere(
+      'LOWER(doctor.specialization) = LOWER(:specialization)',
+      {
+        specialization,
+      },
+    );
+  }
+
+  query.skip((page - 1) * limit);
+  query.take(limit);
+
+  const [data, total] =
+    await query.getManyAndCount();
+
+  return {
+    total,
+    page,
+    limit,
+    data,
+  };
+}
+
+async findOne(id: number) {
+  if (isNaN(id)) {
+    throw new BadRequestException(
+      'Invalid doctor id',
+    );
+  }
+
+  const doctor =
+    await this.doctorRepo.findOne({
+      where: { id },
+    });
+
+  if (!doctor) {
+    throw new NotFoundException(
+      'Doctor not found',
+    );
+  }
+
+  return doctor;
+}
 }

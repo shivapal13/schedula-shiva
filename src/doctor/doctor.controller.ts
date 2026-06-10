@@ -51,5 +51,5 @@ export class DoctorController {
       req.user.userId,
       dto,
     );
-  }
+}
 }

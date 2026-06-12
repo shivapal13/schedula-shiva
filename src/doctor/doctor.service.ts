@@ -10,7 +10,8 @@ import { Repository } from 'typeorm';
 
 import { DoctorProfile } from './doctor.entity';
 import { User } from '../users/entity/user.entities';
-
+import { RecurringAvailability } from '../availability/recurring-availability.entity';
+import { CustomAvailability } from '../availability/custom-availability.entity';
 @Injectable()
 export class DoctorService {
   constructor(
@@ -19,8 +20,12 @@ export class DoctorService {
 
     @InjectRepository(User)
     private userRepo: Repository<User>,
-  ) {}
+    @InjectRepository(RecurringAvailability)
+private recurringRepo: Repository<RecurringAvailability>,
 
+@InjectRepository(CustomAvailability)
+private customRepo: Repository<CustomAvailability>,
+  ) {}
   async create(userId: number, dto: any) {
     const existing =
       await this.doctorRepo.findOne({
@@ -48,7 +53,20 @@ export class DoctorService {
 
     return this.doctorRepo.save(profile);
   }
+private filterFutureSlots(
+  slots: any[],
+  date: string,
+) {
+  const now = new Date();
 
+  return slots.filter((slot) => {
+    const slotDateTime = new Date(
+      `${date}T${slot.startTime}:00`,
+    );
+
+    return slotDateTime > now;
+  });
+}
   async get(userId: number) {
     const profile =
       await this.doctorRepo.findOne({
@@ -124,7 +142,194 @@ async findAll(filters: any) {
     data,
   };
 }
+async getSlots(
+  doctorId: number,
+  date: string,
+  duration: number,
+) {
+  if (!date) {
+    throw new BadRequestException(
+      'Date is required',
+    );
+  }
 
+  if (![10, 15, 30].includes(duration)) {
+    throw new BadRequestException(
+      'Invalid slot duration',
+    );
+  }
+  const selectedDate = new Date(date);
+
+if (isNaN(selectedDate.getTime())) {
+  throw new BadRequestException(
+    'Invalid date',
+  );
+}
+const today = new Date();
+
+today.setHours(0, 0, 0, 0);
+
+if (selectedDate < today) {
+  throw new BadRequestException(
+    'Past date not allowed',
+  );
+}
+  const doctor =
+    await this.doctorRepo.findOne({
+      where: { id: doctorId },
+    });
+
+  if (!doctor) {
+    throw new NotFoundException(
+      'Doctor not found',
+    );
+  }
+
+  const custom =
+    await this.customRepo.find({
+      where: {
+        doctor: { id: doctorId },
+        date,
+      },
+    });
+
+  if (custom.length > 0) {
+    const slots:any[] = [];
+
+    for (const item of custom) {
+      slots.push(
+        ...this.generateSlots(
+          item.startTime,
+          item.endTime,
+          duration,
+        ),
+      );
+    }
+if (slots.length === 0) {
+  throw new NotFoundException(
+    'No slots available',
+  );
+}
+   const futureSlots =
+  this.filterFutureSlots(
+    slots,
+    date,
+  );
+
+if (futureSlots.length === 0) {
+  throw new NotFoundException(
+    'No future slots available',
+  );
+}
+
+return {
+  source: 'custom',
+  slots: futureSlots,
+};
+  }
+
+  const dayOfWeek = new Date(date)
+    .toLocaleDateString('en-US', {
+      weekday: 'long',
+    })
+    .toUpperCase();
+
+  const recurring =
+    await this.recurringRepo.find({
+      where: {
+        doctor: { id: doctorId },
+        dayOfWeek,
+      },
+    });
+    if (recurring.length === 0) {
+  throw new NotFoundException(
+    'No availability found',
+  );
+}
+  const slots:any[] = [];
+
+for (const item of recurring) {
+  slots.push(
+    ...this.generateSlots(
+      item.startTime,
+      item.endTime,
+      duration,
+    ),
+  );
+}
+if (slots.length === 0) {
+  throw new NotFoundException(
+    'No slots available',
+  );
+}
+const futureSlots =
+  this.filterFutureSlots(
+    slots,
+    date,
+  );
+
+if (futureSlots.length === 0) {
+  throw new NotFoundException(
+    'No future slots available',
+  );
+}
+
+return {
+  source: 'recurring',
+  slots: futureSlots,
+};
+}
+private generateSlots(
+  startTime: string,
+  endTime: string,
+  duration: number,
+) {
+  const slots:any[] = [];
+
+  let current =
+    this.toMinutes(startTime);
+
+  const end =
+    this.toMinutes(endTime);
+
+  while (current + duration <= end) {
+    slots.push({
+      startTime:
+        this.toTime(current),
+      endTime:
+        this.toTime(
+          current + duration,
+        ),
+    });
+
+    current += duration;
+  }
+
+  return slots;
+}
+
+private toMinutes(time: string) {
+  const [hours, minutes] =
+    time.split(':').map(Number);
+
+  return hours * 60 + minutes;
+}
+
+private toTime(minutes: number) {
+  const hours = Math.floor(
+    minutes / 60,
+  );
+
+  const mins = minutes % 60;
+
+  return `${String(hours).padStart(
+    2,
+    '0',
+  )}:${String(mins).padStart(
+    2,
+    '0',
+  )}`;
+}
 async findOne(id: number) {
   if (isNaN(id)) {
     throw new BadRequestException(

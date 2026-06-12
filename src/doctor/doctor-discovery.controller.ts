@@ -29,6 +29,19 @@ export class DoctorDiscoveryController {
     });
   }
 
+    @Get(':doctorId/slots')
+getSlots(
+  @Param('doctorId') doctorId: string,
+  @Query('date') date: string,
+  @Query('duration') duration = '15',
+) {
+  return this.doctorService.getSlots(
+    +doctorId,
+    date,
+    +duration,
+  );
+}
+
   @Get(':id')
   findOne(
     @Param('id') id: string,

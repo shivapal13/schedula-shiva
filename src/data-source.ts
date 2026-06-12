@@ -5,6 +5,8 @@ import { User } from './users/entity/user.entities';
 import { DoctorProfile } from './doctor/doctor.entity';
 import { PatientProfile } from './patient/patient.entity';
 
+import { RecurringAvailability } from './availability/recurring-availability.entity';
+import { CustomAvailability } from './availability/custom-availability.entity';
 export default new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
@@ -12,6 +14,14 @@ export default new DataSource({
     rejectUnauthorized: false,
   },
   synchronize: false,
-  entities: [User, DoctorProfile, PatientProfile],
+
+entities: [
+  User,
+  DoctorProfile,
+  PatientProfile,
+  RecurringAvailability,
+  CustomAvailability,
+],
+
   migrations: ['src/migrations/*.ts'],
 });

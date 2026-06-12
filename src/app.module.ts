@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { AvailabilityModule } from './availability/availability.module';
 
 @Module({
   imports: [
@@ -14,21 +15,21 @@ import { UsersModule } from './users/users.module';
       isGlobal: true,
     }),
 
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'Shiva@2005',
-      database: 'schedula',
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
+  TypeOrmModule.forRoot({
+  type: 'postgres',
+  url: process.env.DATABASE_URL,
+  autoLoadEntities: true,
+  synchronize: false,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+}),
 
     AuthModule,
     UsersModule,
     DoctorModule,
     PatientModule,
+    AvailabilityModule,
   ],
   controllers: [AppController],
   providers: [AppService],

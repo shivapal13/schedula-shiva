@@ -7,7 +7,7 @@ import {
 
 import { DoctorService } from './doctor.service';
 
-@Controller('doctor')
+@Controller('availibility')
 export class DoctorDiscoveryController {
   constructor(
     private readonly doctorService: DoctorService,
@@ -28,6 +28,19 @@ export class DoctorDiscoveryController {
       specialization,
     });
   }
+
+    @Get(':doctorId/slots')
+getSlots(
+  @Param('doctorId') doctorId: string,
+  @Query('date') date: string,
+  @Query('duration') duration = '15',
+) {
+  return this.doctorService.getSlots(
+    +doctorId,
+    date,
+    +duration,
+  );
+}
 
   @Get(':id')
   findOne(

@@ -7,7 +7,10 @@ import {
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
+import {
+  Appointment,
+  AppointmentStatus,
+} from '../appointment/appointment.entity';
 import { DoctorProfile } from './doctor.entity';
 import { User } from '../users/entity/user.entities';
 import { RecurringAvailability } from '../availability/recurring-availability.entity';
@@ -22,6 +25,8 @@ export class DoctorService {
     private userRepo: Repository<User>,
     @InjectRepository(RecurringAvailability)
 private recurringRepo: Repository<RecurringAvailability>,
+@InjectRepository(Appointment)
+private appointmentRepo: Repository<Appointment>,
 
 @InjectRepository(CustomAvailability)
 private customRepo: Repository<CustomAvailability>,
@@ -222,9 +227,27 @@ if (futureSlots.length === 0) {
   );
 }
 
+const bookedAppointments =
+  await this.appointmentRepo.find({
+    where: {
+      doctor: { id: doctorId },
+      date,
+      status: AppointmentStatus.BOOKED,
+    },
+  });
+const availableSlots =
+  futureSlots.filter(
+    (slot) =>
+      !bookedAppointments.some(
+        (appt) =>
+          appt.startTime === slot.startTime &&
+          appt.endTime === slot.endTime,
+      ),
+  );
+
 return {
   source: 'custom',
-  slots: futureSlots,
+  slots: availableSlots,
 };
   }
 
@@ -274,10 +297,28 @@ if (futureSlots.length === 0) {
   );
 }
 
-return {
-  source: 'recurring',
-  slots: futureSlots,
-};
+const bookedAppointments =
+  await this.appointmentRepo.find({
+    relations: ['doctor'],
+  });
+
+const doctorAppointments =
+  bookedAppointments.filter(
+    (appt) => appt.doctor?.id === doctorId,
+  );
+const availableSlots =
+  futureSlots.filter(
+    (slot) =>
+      !doctorAppointments.some(
+        (appt) =>
+          appt.startTime === slot.startTime &&
+          appt.endTime === slot.endTime,
+      ),
+    );
+return  {
+   source: 'recurring',
+   slots: availableSlots,
+ };
 }
 private generateSlots(
   startTime: string,
@@ -304,10 +345,8 @@ private generateSlots(
 
     current += duration;
   }
-
   return slots;
 }
-
 private toMinutes(time: string) {
   const [hours, minutes] =
     time.split(':').map(Number);

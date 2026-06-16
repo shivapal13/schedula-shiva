@@ -8,6 +8,8 @@ import { DoctorProfile } from './doctor.entity';
 import { User } from '../users/entity/user.entities';
 import { RecurringAvailability } from '../availability/recurring-availability.entity';
 import { CustomAvailability } from '../availability/custom-availability.entity';
+import { AppointmentModule } from '../appointment/appointment.module';
+import { Appointment } from '../appointment/appointment.entity';
 
 @Module({
   imports: [
@@ -16,7 +18,9 @@ import { CustomAvailability } from '../availability/custom-availability.entity';
   User,
   RecurringAvailability,
   CustomAvailability,
-])
+  Appointment
+]),
+  AppointmentModule,
   ],
  controllers: [
   DoctorController,

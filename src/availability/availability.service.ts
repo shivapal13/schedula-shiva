@@ -77,26 +77,27 @@ export class AvailabilityService {
 
 
     const availability =
-      this.recurringRepo.create({
-        ...dto,
-        doctor,
-      });
+  this.recurringRepo.create({
+    doctor,
+    dayOfWeek: dto.dayOfWeek,
+    startTime: dto.startTime,
+    endTime: dto.endTime,
+
+    schedulingType:
+      dto.schedulingType,
+
+    capacity: dto.capacity,
+
+    bufferTime:
+      dto.bufferTime || 0,
+  });
 
 const saved: any = await this.recurringRepo.save(
   availability,
 );
     return {
-      success: true,
-      message:
-        'Availability created successfully',
-      data: {
-        id: saved.id,
-        doctorId: doctor.id,
-        dayOfWeek: saved.dayOfWeek,
-        startTime: saved.startTime,
-        endTime: saved.endTime,
-      },
-    };
+    saved
+};
   }
 
   async getAll(userId: number) {

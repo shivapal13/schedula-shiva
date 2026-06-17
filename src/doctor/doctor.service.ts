@@ -15,6 +15,8 @@ import { DoctorProfile } from './doctor.entity';
 import { User } from '../users/entity/user.entities';
 import { RecurringAvailability } from '../availability/recurring-availability.entity';
 import { CustomAvailability } from '../availability/custom-availability.entity';
+import { SchedulingType } from '../availability/scheduling-type.enum';
+
 @Injectable()
 export class DoctorService {
   constructor(
@@ -207,6 +209,7 @@ if (selectedDate < today) {
           item.startTime,
           item.endTime,
           duration,
+          item.bufferTime || 0,
         ),
       );
     }
@@ -271,12 +274,41 @@ return {
 }
   const slots:any[] = [];
 
+const item = recurring[0];
+
+if (
+  item.schedulingType ===
+  SchedulingType.WAVE
+) {
+  const bookedCount =
+    await this.appointmentRepo.count({
+      where: {
+        doctor: { id: doctorId },
+        date,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        status:
+          AppointmentStatus.BOOKED,
+      },
+    });
+
+  return {
+    type: 'WAVE',
+    startTime: item.startTime,
+    endTime: item.endTime,
+    capacity: item.capacity,
+    booked: bookedCount,
+    available:
+      item.capacity - bookedCount,
+  };
+}
 for (const item of recurring) {
   slots.push(
     ...this.generateSlots(
       item.startTime,
       item.endTime,
       duration,
+      item.bufferTime || 0,
     ),
   );
 }
@@ -324,6 +356,7 @@ private generateSlots(
   startTime: string,
   endTime: string,
   duration: number,
+  bufferTime=0
 ) {
   const slots:any[] = [];
 
@@ -343,7 +376,7 @@ private generateSlots(
         ),
     });
 
-    current += duration;
+    current += duration+bufferTime;
   }
   return slots;
 }

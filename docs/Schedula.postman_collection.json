@@ -1,0 +1,1021 @@
+{
+  "info": {
+    "_postman_id": "1bcc70cd-06db-41ae-840c-c03eb6c2c682",
+    "name": "Schedula",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52605373",
+    "_collection_link": "https://go.postman.co/collection/52605373-1bcc70cd-06db-41ae-840c-c03eb6c2c682?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "patientSignup",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"Rohit\",\r\n  \"email\": \"patient1@test.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"PATIENT\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/signup",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "patientLogin",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"patient1@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "patientProfile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fullName\": \"rohit\",\r\n  \"age\": 21,\r\n  \"gender\": \"Male\",\r\n  \"contactDetails\": \"9876543210\",\r\n  \"healthInfo\": \"Seasonal allergy\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/patient/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patient",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "patientProfile",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fullName\": \"rohit\",\r\n  \"age\": 21,\r\n  \"gender\": \"Male\",\r\n  \"contactDetails\": \"9876543210\",\r\n  \"healthInfo\": \"Seasonal allergy\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/patient/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patient",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdatepatientProfile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"healthInfo\": \"Seasonal allergy and migraine\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/patient/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patient",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "doctorProfileUsingPatient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fullName\": \"Dr. Raj Sharma\",\r\n  \"specialization\": \"Cardiology\",\r\n  \"experience\": 8,\r\n  \"qualification\": \"MBBS, MD\",\r\n  \"consultationFee\": 1000,\r\n  \"availability\": \"09:00 AM - 05:00 PM\",\r\n  \"profileDetails\": \"Senior Cardiologist\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorSignup",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"Dr Ritik\",\r\n  \"email\": \"doctor1@test.com\",\r\n  \"password\": \"123456\",\r\n  \"role\": \"DOCTOR\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/signup",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorLogin",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVudDFAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MDk0NjQzNCwiZXhwIjoxNzgxMDMyODM0fQ.on5HG231TNwxBBt-EYfmqosemN9C-h_BU8YQF6umnfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"doctor1@test.com\",\r\n  \"password\": \"123456\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorProfile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoiZG9jdG9yNkB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEwOTY5MTYsImV4cCI6MTc4MTE4MzMxNn0.TbhBYzBEzcPjaf5uHBYZecr46IFIXhkUpMlHn0jgsYk\"",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fullName\": \"Dr \",\r\n  \"specialization\": \"radiology\",\r\n  \"experience\": 8,\r\n  \"qualification\": \"MBBS, MD\",\r\n  \"consultationFee\": 1000,\r\n  \"availability\": \"09:00 AM - 05:00 PM\",\r\n  \"profileDetails\": \"Senior Cardiologist\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://schedula-shiva.onrender.com/doctor/profile",
+          "protocol": "https",
+          "host": [
+            "schedula-shiva",
+            "onrender",
+            "com"
+          ],
+          "path": [
+            "doctor",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateDoctorProfile",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiZG9jdG9yMUB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODA5NDcyNjksImV4cCI6MTc4MTAzMzY2OX0.azNPsmdsBoEVadgLz_q4efQ1DCMLMnaozKh05sZGCTk",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"consultationFee\": 1500,\r\n  \"availability\": \"10:00 AM - 06:00 PM\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorProfile",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiZG9jdG9yMUB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODA5NDcyNjksImV4cCI6MTc4MTAzMzY2OX0.azNPsmdsBoEVadgLz_q4efQ1DCMLMnaozKh05sZGCTk",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"consultationFee\": 1500,\r\n  \"availability\": \"10:00 AM - 06:00 PM\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PatientProfileUsingDoctor",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiZG9jdG9yMUB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODA5NDcyNjksImV4cCI6MTc4MTAzMzY2OX0.azNPsmdsBoEVadgLz_q4efQ1DCMLMnaozKh05sZGCTk",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"fullName\": \"sumit\",\r\n  \"age\": 21,\r\n  \"gender\": \"Male\",\r\n  \"contactDetails\": \"9876543210\",\r\n  \"healthInfo\": \"Seasonal allergy\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/patient/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "patient",
+            "profile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAllDoctors",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiZG9jdG9yMUB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEwMTYwMzMsImV4cCI6MTc4MTEwMjQzM30.COXIBab97_9yzXLC2GwkwlWaGRnD7uyXJjxDEzX1wpE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"consultationFee\": 1500,\r\n  \"availability\": \"10:00 AM - 06:00 PM\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetDoctorByName",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiZG9jdG9yNEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEwMTYxODcsImV4cCI6MTc4MTEwMjU4N30.eL4u797VbsCWuF9lZdblHl0VMDAtqHRM6KS46GyNku8",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor?search=Chetan",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "Chetan"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetDoctorBySpecialisation",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjcsImVtYWlsIjoiZG9jdG9yNEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEwMTYxODcsImV4cCI6MTc4MTEwMjU4N30.eL4u797VbsCWuF9lZdblHl0VMDAtqHRM6KS46GyNku8",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor?specialization=radiology",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor"
+          ],
+          "query": [
+            {
+              "key": "specialization",
+              "value": "radiology"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Pagination",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "GET http://localhost:3000/doctor?page=1&limit=2",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor?page=1&limit=1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorByID",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "GET http://localhost:3000/doctor/1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor/6",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "InvalidDoctor",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "GET http://localhost:3000/doctor/1",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor/56",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "56"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorAvailability",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoiZG9jdG9yOEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODExODk2MzksImV4cCI6MTc4MTI3NjAzOX0.zn-IUMBSyEjo8uNMaqqdApeojHYAS5Wn2zU3-JrzTX8",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"dayOfWeek\": \"MONDAY\",\r\n  \"startTime\": \"11:00\",\r\n  \"endTime\": \"14:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/availability",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "availability"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DoctorAvailability",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateDoctorAvailability",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoiZG9jdG9yOEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEyMzQ1NjEsImV4cCI6MTc4MTMyMDk2MX0.OjW1LzipcwJBGn12k5gzg--TTfsUl6y95kVYlLHBK8k",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"startTime\": \"11:00\",\r\n  \"endTime\": \"14:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/availability/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "availability",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteDoctorAvailability",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoiZG9jdG9yOEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEyMzQ1NjEsImV4cCI6MTc4MTMyMDk2MX0.OjW1LzipcwJBGn12k5gzg--TTfsUl6y95kVYlLHBK8k",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"startTime\": \"11:00\",\r\n  \"endTime\": \"14:00\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/availability/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "availability",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Custom Availability",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImVtYWlsIjoiZG9jdG9yOEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODEyMzYyOTcsImV4cCI6MTc4MTMyMjY5N30.KkH2ViTKMMWLkzJUwnRhXZDN-m1vxt-hX-EHuMMoQxY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"date\": \"2026-06-15\",\r\n  \"startTime\": \"14:00\",\r\n  \"endTime\": \"16:00\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/doctor/availability/override",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "availability",
+            "override"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetByDate",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "SlotGeneration",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Appointment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVuODhAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MTU4OTU1MywiZXhwIjoxNzgxNjc1OTUzfQ.j168vAbt5WF6CMdAF0sGrLB976qJ2p1l5n_WUgjF2lQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"doctorId\":2,\r\n  \"date\": \"2026-06-20\",\r\n  \"startTime\": \"11:15\",\r\n  \"endTime\": \"11:30\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/appointment",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointment"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetAppointments",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVuODhAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MTU4OTg1NCwiZXhwIjoxNzgxNjc2MjU0fQ.dFwBblKvrwLetzmZOi-GnYRBfr8eQjdf0RvaH9ATDCI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/appointment/my",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointment",
+            "my"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ViewDoctorAppointment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjQsImVtYWlsIjoiZG9jdG9yMEB0ZXN0LmNvbSIsInJvbGUiOiJET0NUT1IiLCJpYXQiOjE3ODE1OTYyMjYsImV4cCI6MTc4MTY4MjYyNn0.wpJkXPUFvf80qf733gSq0XlNDcM1wNLCrfadK_tgLWU",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor/profile/appointments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "profile",
+            "appointments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateAppointment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoicGF0aWVuODhAdGVzdC5jb20iLCJyb2xlIjoiUEFUSUVOVCIsImlhdCI6MTc4MTU5Njg1MCwiZXhwIjoxNzgxNjgzMjUwfQ.EmtYMPqgVlhkLjrVdJCBJ9N-h4r7rttpTD537zc9wM8",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/appointment/2/cancel",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointment",
+            "2",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RescheduleAppointment",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_1dvi}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"date\": \"2026-06-22\",\r\n  \"startTime\": \"10:20\",\r\n  \"endTime\": \"10:35\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/appointment/10/reschedule",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "appointment",
+            "10",
+            "reschedule"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "supabase_service_role_api_key_1dvi",
+      "secret": true
+    }
+  ]
+}

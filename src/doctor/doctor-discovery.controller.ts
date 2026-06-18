@@ -7,7 +7,7 @@ import {
 
 import { DoctorService } from './doctor.service';
 
-@Controller('doctor')
+@Controller('availibility')
 export class DoctorDiscoveryController {
   constructor(
     private readonly doctorService: DoctorService,

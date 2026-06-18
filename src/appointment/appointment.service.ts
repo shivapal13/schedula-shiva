@@ -12,7 +12,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Appointment } from './appointment.entity';;
-
+import { RecurringAvailability } from '../availability/recurring-availability.entity';
+import { SchedulingType } from '../availability/scheduling-type.enum';
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { PatientProfile } from '../patient/patient.entity';
 
@@ -27,8 +28,12 @@ export class AppointmentService {
 
     @InjectRepository(PatientProfile)
     private patientRepo: Repository<PatientProfile>,
+
+     @InjectRepository(RecurringAvailability)
+     private recurringRepo: Repository<RecurringAvailability>,
   ) {}
-  async bookAppointment(
+
+async bookAppointment(
   userId: number,
   dto: any,
 ) {
@@ -45,8 +50,7 @@ export class AppointmentService {
       'Patient profile not found',
     );
   }
-
-  const doctor =
+    const doctor =
     await this.doctorRepo.findOne({
       where: {
         id: dto.doctorId,
@@ -67,7 +71,77 @@ if (appointmentDateTime <= new Date()) {
     'Cannot book past appointment',
   );
 }
+const dayOfWeek = new Date(dto.date)
+  .toLocaleDateString('en-US', {
+    weekday: 'long',
+  })
+  .toUpperCase();
+const availability =
+  await this.recurringRepo.findOne({
+    where: {
+      doctor: {
+        id: dto.doctorId,
+      },
+      dayOfWeek,
+      startTime: dto.startTime,
+      endTime: dto.endTime,
+    },
+  });
 
+let tokenNumber: number | undefined;
+
+if (
+  availability?.schedulingType ===
+  SchedulingType.WAVE
+) {
+
+   const existingPatientBooking =
+    await this.appointmentRepo.findOne({
+      where: {
+        patient: {
+          id: patient.id,
+        },
+        doctor: {
+          id: dto.doctorId,
+        },
+        date: dto.date,
+        startTime: dto.startTime,
+        endTime: dto.endTime,
+        status:
+          AppointmentStatus.BOOKED,
+      },
+    });
+
+  if (existingPatientBooking) {
+    throw new BadRequestException(
+      'You already booked this wave',
+    );
+  }
+  const bookedCount =
+    await this.appointmentRepo.count({
+      where: {
+        doctor: {
+          id: dto.doctorId,
+        },
+        date: dto.date,
+        startTime: dto.startTime,
+        endTime: dto.endTime,
+        status:
+          AppointmentStatus.BOOKED,
+      },
+    });
+
+  if (
+    bookedCount >=
+    availability.capacity
+  ) {
+    throw new BadRequestException(
+      'Wave is full',
+    );
+  }
+
+  tokenNumber = bookedCount + 1;
+}
   const existing =
     await this.appointmentRepo.findOne({
       where: {
@@ -83,11 +157,16 @@ if (appointmentDateTime <= new Date()) {
       relations: ['doctor'],
     });
 
+  if (
+  availability?.schedulingType !==
+  SchedulingType.WAVE
+) {
   if (existing) {
     throw new BadRequestException(
       'Slot already booked',
     );
   }
+}
 
   const appointment =
     this.appointmentRepo.create({
@@ -96,6 +175,7 @@ if (appointmentDateTime <= new Date()) {
       endTime: dto.endTime,
       doctor,
       patient,
+      tokenNumber,
       status:
         AppointmentStatus.BOOKED,
     });

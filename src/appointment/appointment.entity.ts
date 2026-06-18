@@ -38,7 +38,7 @@ export class Appointment {
     type: 'integer',
   nullable: true,
 })
-tokenNumber: number | undefined;
+tokenNumber: number | null;
 
   @ManyToOne(() => DoctorProfile)
   doctor: DoctorProfile;

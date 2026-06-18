@@ -10,7 +10,8 @@ import {
 } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
-
+import { Roles } from '../auth/roles.decorator';
+import { RescheduleAppointmentDto } from './dto/reschedule-appointment.dto';
 import { AppointmentService } from './appointment.service';
 
 @Controller('appointment')
@@ -48,6 +49,20 @@ cancelAppointment(
   return this.appointmentService.cancelAppointment(
     +id,
     req.user.userId,
+  );
+}
+@Patch(':id/reschedule')
+@Roles('PATIENT')
+@UseGuards(AuthGuard('jwt'))
+rescheduleAppointment(
+  @Param('id') id: number,
+  @Body() dto: RescheduleAppointmentDto,
+  @Req() req,
+) {
+  return this.appointmentService.rescheduleAppointment(
+    Number(id),
+    req.user.userId,
+    dto,
   );
 }
 }

@@ -402,6 +402,12 @@ private toTime(minutes: number) {
     '0',
   )}`;
 }
+private isWithinCutoff(
+  date: string,
+  startTime: string,
+) {
+
+}
 async findOne(id: number) {
   if (isNaN(id)) {
     throw new BadRequestException(

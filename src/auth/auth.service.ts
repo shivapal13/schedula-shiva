@@ -43,18 +43,24 @@ export class AuthService {
     };
   }
 
-  async login(loginDto: LoginDto) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: loginDto.email,
-      },
-    });
-
-    if (!user) {
-      throw new UnauthorizedException(
-        'Invalid credentials',
-      );
-    }
+async login(loginDto: LoginDto){
+  const user = await this.userRepository.findOne({
+  where: {
+    email: loginDto.email,
+  },
+  select: [
+    'id',
+    'email',
+    'password',
+    'role',
+    'username',
+  ],
+});
+if (!user) {
+  throw new UnauthorizedException(
+    'Invalid credentials',
+  );
+}
 
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,

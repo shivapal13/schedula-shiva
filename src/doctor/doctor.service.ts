@@ -428,4 +428,63 @@ async findOne(id: number) {
 
   return doctor;
 }
+async cancelAppointmentByDoctor(
+  appointmentId: number,
+  userId: number,
+) {
+  const doctor =
+  await this.doctorRepo.findOne({
+    where: {
+      user: { id: userId },
+    },
+  });
+
+if (!doctor) {
+  throw new NotFoundException(
+    'Doctor profile not found',
+  );
+}
+const appointment =
+  await this.appointmentRepo.findOne({
+    where: {
+      id: appointmentId,
+    },
+    relations: [
+      'doctor',
+    ],
+  });
+
+if (!appointment) {
+  throw new NotFoundException(
+    'Appointment not found',
+  );
+}
+if (
+  appointment.doctor.id !==
+  doctor.id
+) {
+  throw new BadRequestException(
+    'Unauthorized access',
+  );
+}
+if (
+  appointment.status ===
+  AppointmentStatus.CANCELLED
+) {
+  throw new BadRequestException(
+    'Appointment already cancelled',
+  );
+}
+appointment.status =
+  AppointmentStatus.CANCELLED;
+
+await this.appointmentRepo.save(
+  appointment,
+);
+return {
+  success: true,
+  message:
+    'Appointment cancelled successfully',
+};
+}
 }

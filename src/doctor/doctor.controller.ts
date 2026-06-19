@@ -6,6 +6,8 @@ import {
   Body,
   Req,
   UseGuards,
+  Query,
+  Param
 } from '@nestjs/common';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -56,9 +58,22 @@ export class DoctorController {
 @Get('appointments')
 getDoctorAppointments(
   @Req() req,
+  @Query('date') date?: string,
 ) {
   return this.appointmentService.getDoctorAppointments(
     req.user.userId,
+    date,
   );
+}
+@Patch('appointments/:id/cancel')
+cancelAppointment(
+  @Param('id') id: string,
+  @Req() req,
+) {
+  return this.appointmentService
+    .cancelAppointmentByDoctor(
+      +id,
+      req.user.userId,
+    );
 }
 }

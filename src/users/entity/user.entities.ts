@@ -15,8 +15,10 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
-  password!: string;
+  @Column({
+  select: false,
+})
+  password:string;
 
   @Column({
     type: 'enum',

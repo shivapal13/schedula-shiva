@@ -243,6 +243,7 @@ return appointments;
 }
 async getDoctorAppointments(
   userId: number,
+  date?: string,
 ) {
   const doctor =
     await this.doctorRepo.findOne({
@@ -256,26 +257,76 @@ async getDoctorAppointments(
       'Doctor profile not found',
     );
   }
+  if (
+  date &&
+  isNaN(Date.parse(date))
+) {
+  throw new BadRequestException(
+    'Invalid date format',
+  );
+}
 
- const appointments =
+ const where: any = {
+  doctor: {
+    id: doctor.id,
+  },
+  status:
+    AppointmentStatus.BOOKED,
+};
+
+if (date) {
+  where.date = date;
+}
+const appointments =
   await this.appointmentRepo.find({
-    where: {
-      doctor: {
-        id: doctor.id,
-      },
-    },
+    where,
     relations: [
       'patient',
+      'patient.user',
     ],
   });
-
-if (appointments.length === 0) {
+  if (appointments.length === 0) {
   throw new NotFoundException(
     'No appointments found',
   );
 }
+const result = await Promise.all(
+  appointments.map(
+    async (appointment) => {
+      const dayOfWeek = new Date(
+        appointment.date,
+      )
+        .toLocaleDateString(
+          'en-US',
+          {
+            weekday: 'long',
+          },
+        )
+        .toUpperCase();
+const availabilities =
+  await this.recurringRepo.find({
+    where: {
+      doctor: { id: doctor.id },
+      dayOfWeek,
+    },
+  });
+     const availability =
+      availabilities.find(
+    (a) =>
+      appointment.startTime >= a.startTime &&
+      appointment.endTime <= a.endTime,
+  );
 
-return appointments;
+      return {
+        ...appointment,
+        schedulingType:
+          availability
+            ?.schedulingType,
+      };
+    },
+  ),
+);
+return result;
 }
 async cancelAppointment(
   appointmentId: number,
@@ -326,6 +377,68 @@ if (
   if (
     appointment.patient.id !==
     patient.id
+  ) {
+    throw new BadRequestException(
+      'Unauthorized access',
+    );
+  }
+
+  if (
+    appointment.status ===
+    AppointmentStatus.CANCELLED
+  ) {
+    throw new BadRequestException(
+      'Appointment already cancelled',
+    );
+  }
+
+  appointment.status =
+    AppointmentStatus.CANCELLED;
+
+  await this.appointmentRepo.save(
+    appointment,
+  );
+
+  return {
+    success: true,
+    message:
+      'Appointment cancelled successfully',
+  };
+}
+async cancelAppointmentByDoctor(
+  appointmentId: number,
+  userId: number,
+) {
+  const doctor =
+    await this.doctorRepo.findOne({
+      where: {
+        user: { id: userId },
+      },
+    });
+
+  if (!doctor) {
+    throw new NotFoundException(
+      'Doctor profile not found',
+    );
+  }
+
+  const appointment =
+    await this.appointmentRepo.findOne({
+      where: {
+        id: appointmentId,
+      },
+      relations: ['doctor'],
+    });
+
+  if (!appointment) {
+    throw new NotFoundException(
+      'Appointment not found',
+    );
+  }
+
+  if (
+    appointment.doctor.id !==
+    doctor.id
   ) {
     throw new BadRequestException(
       'Unauthorized access',

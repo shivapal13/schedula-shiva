@@ -16,7 +16,7 @@ import { RecurringAvailability } from '../availability/recurring-availability.en
 import { SchedulingType } from '../availability/scheduling-type.enum';
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { PatientProfile } from '../patient/patient.entity';
-
+import { Notification,NotificationType } from '../notification/notification.entity';
 @Injectable()
 export class AppointmentService {
   constructor(
@@ -31,6 +31,9 @@ export class AppointmentService {
 
      @InjectRepository(RecurringAvailability)
      private recurringRepo: Repository<RecurringAvailability>,
+
+     @InjectRepository(Notification)
+     private notificationRepo: Repository<Notification>,
   ) {}
 async bookAppointment(
   userId: number,
@@ -245,6 +248,14 @@ const saved =
     appointment,
   );
 
+  await this.notificationRepo.save({
+  patient,
+  title: 'Appointment Booked',
+  message:
+    `Your appointment has been booked successfully with ${doctor.fullName}`,
+  type:
+    NotificationType.APPOINTMENT_BOOKED,
+});
 return {
   success: true,
   message:
@@ -523,6 +534,14 @@ if (
   await this.appointmentRepo.save(
     appointment,
   );
+  await this.notificationRepo.save({
+  patient: appointment.patient,
+  title: 'Appointment Cancelled',
+  message:
+    `Your appointment has been cancelled by ${doctor.fullName}`,
+  type:
+    NotificationType.APPOINTMENT_CANCELLED,
+});
 
   return {
     success: true,
@@ -754,6 +773,14 @@ if (
 await this.appointmentRepo.save(
   appointment,
 );
+await this.notificationRepo.save({
+  patient: appointment.patient,
+  title: 'Appointment Rescheduled',
+  message:
+    `Your appointment has been rescheduled successfully`,
+  type:
+    NotificationType.APPOINTMENT_RESCHEDULED,
+});
 
 return {
   success: true,

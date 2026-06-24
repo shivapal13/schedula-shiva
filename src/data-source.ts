@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-
+import { Notification } from './notification/notification.entity';
 import { User } from './users/entity/user.entities';
 import { DoctorProfile } from './doctor/doctor.entity';
 import { PatientProfile } from './patient/patient.entity';
@@ -22,6 +22,7 @@ entities: [
   RecurringAvailability,
   CustomAvailability,
   Appointment,
+  Notification
 ],
   migrations: ['src/migrations/*.ts'],
 });

@@ -8,7 +8,7 @@ import { Appointment } from './appointment.entity';
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { PatientProfile } from '../patient/patient.entity';
 import { RecurringAvailability } from '../availability/recurring-availability.entity';
-
+import { Notification } from '../notification/notification.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -16,6 +16,7 @@ import { RecurringAvailability } from '../availability/recurring-availability.en
       DoctorProfile,
       PatientProfile,
       RecurringAvailability,
+      Notification
     ]),
   ],
   controllers: [AppointmentController],

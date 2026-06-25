@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { NotFoundException,BadRequestException } from '@nestjs/common';
 import { Notification } from './notification.entity';
 import { PatientProfile } from '../patient/patient.entity';
+import { NotificationType } from './notification.entity';
 
 @Injectable()
 export class NotificationService {
@@ -183,5 +184,18 @@ async getUnreadCount(
   return {
     unreadCount: count,
   };
+}
+async createNotification(
+  patient: PatientProfile,
+  title: string,
+  message: string,
+  type: NotificationType,
+) {
+  return this.notificationRepo.save({
+    patient,
+    title,
+    message,
+    type,
+  });
 }
 }

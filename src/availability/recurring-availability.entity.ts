@@ -31,6 +31,11 @@ schedulingType: SchedulingType;
 @Column({
   nullable: true,
 })
+slotDuration: number;
+
+@Column({
+  nullable: true,
+})
 bufferTime: number;
 
 @Column({

@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { CustomAvailability } from './custom-availability.entity';
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { RecurringAvailability } from './recurring-availability.entity';
+import { CreateAvailabilityDto } from './dto/create-availability.dto';
 @Injectable()
 export class AvailabilityService {
   constructor(
@@ -21,7 +22,7 @@ export class AvailabilityService {
     private readonly customRepo: Repository<CustomAvailability>,
   ) {}
 
-  async create(userId: number, dto: any) {
+  async create(userId: number, dto: CreateAvailabilityDto) {
     const doctor = await this.doctorRepo.findOne({
       where: {
         user: { id: userId },
@@ -86,10 +87,14 @@ export class AvailabilityService {
     schedulingType:
       dto.schedulingType,
 
-    capacity: dto.capacity,
+    slotDuration:
+      dto.slotDuration,
 
     bufferTime:
       dto.bufferTime || 0,
+
+    capacity:
+      dto.capacity,
   });
 
 const saved: any = await this.recurringRepo.save(

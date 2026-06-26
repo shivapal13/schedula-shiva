@@ -32,7 +32,6 @@ export class AppointmentService {
      @InjectRepository(RecurringAvailability)
      private recurringRepo: Repository<RecurringAvailability>,
   ) {}
-
 async bookAppointment(
   userId: number,
   dto: any,
@@ -62,6 +61,26 @@ async bookAppointment(
       'Doctor not found',
     );
   }
+  const existingSameDayAppointment =
+  await this.appointmentRepo.findOne({
+    where: {
+      patient: {
+        id: patient.id,
+      },
+      doctor: {
+        id: dto.doctorId,
+      },
+      date: dto.date,
+      status:
+        AppointmentStatus.BOOKED,
+    },
+  });
+
+if (existingSameDayAppointment) {
+  throw new BadRequestException(
+    `You already have an appointment with ${doctor.fullName} on this ${existingSameDayAppointment.date}`,
+  );
+}
   const appointmentDateTime = new Date(
   `${dto.date}T${dto.startTime}:00`,
 );
@@ -103,11 +122,10 @@ if (!availability) {
 let tokenNumber: number | undefined;
 
 if (
-  availability?.schedulingType ===
+  availability.schedulingType ===
   SchedulingType.WAVE
 ) {
-
-   const existingPatientBooking =
+  const existingPatientBooking =
     await this.appointmentRepo.findOne({
       where: {
         patient: {
@@ -129,6 +147,7 @@ if (
       'You already booked this wave',
     );
   }
+
   const bookedCount =
     await this.appointmentRepo.count({
       where: {
@@ -142,67 +161,96 @@ if (
           AppointmentStatus.BOOKED,
       },
     });
-
   if (
     bookedCount >=
     availability.capacity
   ) {
-    throw new BadRequestException(
-      'Wave is full',
-    );
-  }
+    const suggestion =
+      await this.findNextAvailableSlot(
+        dto.doctorId,
+        dto.date,
+        availability.schedulingType
+      );
 
+    if (!suggestion) {
+      throw new BadRequestException(
+        'No appointments available in the next 30 working days',
+      );
+    }
+
+    throw new BadRequestException({
+      message: 'Wave is full',
+      nextAvailable:
+        suggestion,
+    });
+  }
   tokenNumber = bookedCount + 1;
 }
-  const existing =
-    await this.appointmentRepo.findOne({
-      where: {
-        doctor: {
-          id: dto.doctorId,
-        },
-        date: dto.date,
-        startTime: dto.startTime,
-        endTime: dto.endTime,
-        status:
-          AppointmentStatus.BOOKED,
-      },
-      relations: ['doctor'],
-    });
-
-  if (
-  availability?.schedulingType !==
+if (
+  availability.schedulingType !==
   SchedulingType.WAVE
 ) {
-  if (existing) {
-    throw new BadRequestException(
-      'Slot already booked',
-    );
-  }
-}
-
-  const appointment =
-    this.appointmentRepo.create({
+  const existing =
+  await this.appointmentRepo.findOne({
+    where: {
+      doctor: {
+        id: dto.doctorId,
+      },
       date: dto.date,
       startTime: dto.startTime,
       endTime: dto.endTime,
-      doctor,
-      patient,
-      tokenNumber,
       status:
         AppointmentStatus.BOOKED,
+    },
+  });
+  if (existing) {
+    const suggestion =
+      await this.findNextAvailableSlot(
+        dto.doctorId,
+        dto.date,
+        availability.schedulingType,
+        dto.startTime,
+        dto.endTime
+      );
+
+    if (!suggestion) {
+      throw new BadRequestException(
+        'No appointments available in the next 30 working days',
+      );
+    }
+
+    throw new BadRequestException({
+      message:
+        'Requested slot unavailable',
+      nextAvailable:
+        suggestion,
     });
+  }
+}   
 
-  const saved =
-    await this.appointmentRepo.save(
-      appointment,
-    );
+const appointment =
+  this.appointmentRepo.create({
+    date: dto.date,
+    startTime: dto.startTime,
+    endTime: dto.endTime,
+    doctor,
+    patient,
+    tokenNumber,
+    status:
+      AppointmentStatus.BOOKED,
+  });
 
-  return {
-    success: true,
-    message:
-      'Appointment booked successfully',
-    data: saved,
-  };
+const saved =
+  await this.appointmentRepo.save(
+    appointment,
+  );
+
+return {
+  success: true,
+  message:
+    'Appointment booked successfully',
+  data: saved,
+};
 }
 async getMyAppointments(
   userId: number,
@@ -435,6 +483,21 @@ async cancelAppointmentByDoctor(
       'Appointment not found',
     );
   }
+  const appointmentDateTime = new Date(
+  `${appointment.date}T${appointment.startTime}:00`,
+);
+const diff =
+  appointmentDateTime.getTime() -
+  Date.now();
+
+if (
+  diff <
+  30 * 60 * 1000
+) {
+  throw new BadRequestException(
+    'Cancellation not allowed within 30 minutes',
+  );
+}
 
   if (
     appointment.doctor.id !==
@@ -662,6 +725,9 @@ if (
       await this.findNextAvailableSlot(
         appointment.doctor.id,
         dto.date,
+        availability.schedulingType,
+        dto.startTime,
+        dto.endTime
       );
 
     throw new BadRequestException({
@@ -696,36 +762,195 @@ return {
   data: appointment,
 };
 }
+private timeToMinutes(
+  time: string,
+): number {
+  const [hours, minutes] =
+    time.split(':').map(Number);
 
+  return hours * 60 + minutes;
+}
+
+private minutesToTime(
+  minutes: number,
+): string {
+  const hours = Math.floor(
+    minutes / 60,
+  );
+
+  const mins = minutes % 60;
+
+  return `${hours
+    .toString()
+    .padStart(2, '0')}:${mins
+    .toString()
+    .padStart(2, '0')}`;
+}
 private async findNextAvailableSlot(
   doctorId: number,
-  date: string,
+  startDate: string,
+  schedulingType:SchedulingType,
+  requestedStartTime?: string,
+  requestedEndTime?: string,
 ) {
-  const dayOfWeek = new Date(date)
-    .toLocaleDateString('en-US', {
-      weekday: 'long',
-    })
-    .toUpperCase();
+  const baseDate =
+    new Date(startDate);
 
-  const availability =
-    await this.recurringRepo.findOne({
-      where: {
-        doctor: { id: doctorId },
-        dayOfWeek,
-        schedulingType:
-          SchedulingType.STREAM,
+  for (
+    let i = 0;
+    i <= 30;
+    i++
+  ) {
+    const currentDate =
+      new Date(baseDate);
+
+    currentDate.setDate(
+      currentDate.getDate() + i,
+    );
+  const date = currentDate
+  .toLocaleDateString('sv-SE');
+
+    const dayOfWeek =
+      currentDate
+        .toLocaleDateString(
+          'en-US',
+          {
+            weekday: 'long',
+          },
+        )
+        .toUpperCase();
+
+   const availabilities =
+  await this.recurringRepo.find({
+    where: {
+      doctor: {
+        id: doctorId,
       },
-    });
+      dayOfWeek,
+      schedulingType
+    },
+  });
+if (
+  availabilities.length === 0
+) {
+  continue;
+}
 
-  if (!availability) {
-    return null;
+    for (const availability of availabilities) {
+
+      if (
+        availability.schedulingType ===
+        SchedulingType.WAVE
+      ) {
+        const bookedCount =
+  await this.appointmentRepo.count({
+    where: {
+      doctor: {
+        id: doctorId,
+      },
+      date,
+      status:
+        AppointmentStatus.BOOKED,
+    },
+  });
+        if (
+          bookedCount <
+          availability.capacity
+        ) {
+          return {
+            date,
+            startTime:
+              availability.startTime,
+            endTime:
+              availability.endTime,
+            schedulingType:
+              availability.schedulingType,
+          };
+        }
+      }
+      if (
+        availability.schedulingType ===
+        SchedulingType.STREAM
+      ) {
+      const startMinutes =
+        date === startDate &&
+       requestedEndTime
+    ? this.timeToMinutes(
+        requestedEndTime,
+      )
+    : this.timeToMinutes(
+        availability.startTime,
+      );
+
+        const endMinutes =
+          this.timeToMinutes(
+            availability.endTime,
+          );
+
+       const slotDuration =
+       availability.slotDuration || 15;
+
+        for (
+          let current =
+            startMinutes;
+          current + slotDuration <=
+          endMinutes;
+          current +=
+         slotDuration +
+          (availability.bufferTime || 0)
+        ) {
+          const slotStart =
+            this.minutesToTime(
+              current,
+            );
+
+          const slotEnd =
+            this.minutesToTime(
+              current +
+                slotDuration,
+            );
+              if (
+              date === startDate &&
+              slotStart ===
+                requestedStartTime &&
+              slotEnd ===
+                requestedEndTime
+            ) {
+              continue;
+            }
+
+          const existing =
+            await this.appointmentRepo.findOne({
+              where: {
+                doctor: {
+                  id: doctorId,
+                },
+                date,
+                startTime:
+                  slotStart,
+                endTime:
+                  slotEnd,
+                status:
+                  AppointmentStatus.BOOKED,
+              },
+            });
+
+          if (!existing) {
+            return {
+              date,
+              startTime:
+                slotStart,
+              endTime:
+                slotEnd,
+              schedulingType:
+                SchedulingType.STREAM,
+            };
+          }
+        }
+      }
+    }
   }
+return null;
+}
+}
 
-  return {
-    startTime:
-      availability.startTime,
-    endTime:
-      availability.endTime,
-  };
-}
-}

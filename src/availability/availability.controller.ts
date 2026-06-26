@@ -15,6 +15,7 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import {AvailabilityService} from './availability.service';
 import { Query } from '@nestjs/common';
+import { CreateAvailabilityDto } from './dto/create-availability.dto';
 @Controller('doctor/availability')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('DOCTOR')
@@ -26,7 +27,7 @@ export class AvailabilityController {
   @Post()
   create(
     @Req() req,
-    @Body() dto,
+    @Body() dto:CreateAvailabilityDto,
   ) {
     return this.availabilityService.create(
       req.user.userId,

@@ -34,6 +34,11 @@ export class Appointment {
   })
   status: AppointmentStatus;
 
+@Column({
+  default: false,
+})
+reminderSent: boolean;
+  
   @Column({
     type: 'integer',
   nullable: true,

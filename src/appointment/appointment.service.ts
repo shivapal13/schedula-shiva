@@ -16,10 +16,13 @@ import { RecurringAvailability } from '../availability/recurring-availability.en
 import { SchedulingType } from '../availability/scheduling-type.enum';
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { PatientProfile } from '../patient/patient.entity';
-
+import { Notification,NotificationType } from '../notification/notification.entity';
+import { NotificationService } from '../notification/notification.service';
 @Injectable()
 export class AppointmentService {
   constructor(
+    private notificationService:
+      NotificationService,
     @InjectRepository(Appointment)
     private appointmentRepo: Repository<Appointment>,
 
@@ -245,6 +248,13 @@ const saved =
     appointment,
   );
 
+await this.notificationService
+  .createNotification(
+    patient,
+    'Appointment Booked',
+    `Your appointment with Dr. ${doctor.fullName} has been booked successfully for ${dto.date} at ${dto.startTime}.`,
+    NotificationType.APPOINTMENT_BOOKED,
+  );
 return {
   success: true,
   message:
@@ -447,6 +457,14 @@ if (
     appointment,
   );
 
+  await this.notificationService
+  .createNotification(
+    appointment.patient,
+    'Appointment Cancelled',
+    `Your appointment scheduled on ${appointment.date} at ${appointment.startTime} has been cancelled.`,
+    NotificationType.APPOINTMENT_CANCELLED,
+  );
+
   return {
     success: true,
     message:
@@ -470,14 +488,16 @@ async cancelAppointmentByDoctor(
     );
   }
 
-  const appointment =
-    await this.appointmentRepo.findOne({
-      where: {
-        id: appointmentId,
-      },
-      relations: ['doctor'],
-    });
-
+const appointment =
+  await this.appointmentRepo.findOne({
+    where: {
+      id: appointmentId,
+    },
+    relations: [
+      'doctor',
+      'patient',
+    ],
+  });
   if (!appointment) {
     throw new NotFoundException(
       'Appointment not found',
@@ -523,7 +543,7 @@ if (
   await this.appointmentRepo.save(
     appointment,
   );
-
+ 
   return {
     success: true,
     message:
@@ -754,6 +774,13 @@ if (
 await this.appointmentRepo.save(
   appointment,
 );
+await this.notificationService
+  .createNotification(
+    appointment.patient,
+    'Appointment Rescheduled',
+    `Your appointment has been rescheduled to ${dto.startDate} at ${dto.startTime}.`,
+    NotificationType.APPOINTMENT_RESCHEDULED,
+  );
 
 return {
   success: true,

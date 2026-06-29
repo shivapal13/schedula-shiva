@@ -64,6 +64,26 @@ async bookAppointment(
       'Doctor not found',
     );
   }
+  const bookingDate=new Date(dto.date);
+  if (
+  isNaN(bookingDate.getTime())
+) {
+  throw new BadRequestException(
+    'Invalid date format',
+  );
+}
+const today = new Date();
+
+const todayDate =
+  today.toLocaleDateString(
+    'en-CA',
+  );
+
+if (dto.date !== todayDate) {
+  throw new BadRequestException(
+    'Appointments can only be booked for today',
+  );
+}
   const existingSameDayAppointment =
   await this.appointmentRepo.findOne({
     where: {

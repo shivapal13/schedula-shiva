@@ -7,6 +7,7 @@ import {
 
 import { DoctorProfile } from '../doctor/doctor.entity';
 import { PatientProfile } from '../patient/patient.entity';
+import { SchedulingType } from '../availability/scheduling-type.enum';
 
 export enum AppointmentStatus {
   BOOKED = 'BOOKED',
@@ -33,6 +34,12 @@ export class Appointment {
     default: AppointmentStatus.BOOKED,
   })
   status: AppointmentStatus;
+
+  @Column({
+  type: 'enum',
+  enum: SchedulingType,
+})
+schedulingType: SchedulingType;
 
 @Column({
   default: false,

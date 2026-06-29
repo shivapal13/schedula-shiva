@@ -8,6 +8,7 @@ import { NotificationType } from "../notification/notification.entity";
 import {
   AppointmentStatus,
 } from '../appointment/appointment.entity';
+import { SchedulingType } from "../availability/scheduling-type.enum";
 import { Repository } from "typeorm";
 @Injectable()
 export class ReminderService {
@@ -23,9 +24,6 @@ export class ReminderService {
   CronExpression.EVERY_MINUTE,
 )
 async sendReminders() {
-  console.log(
-    'Checking appointments...',
-  );
   const appointments =
     await this.appointmentRepo.find({
       where: {
@@ -39,10 +37,6 @@ async sendReminders() {
       ],
     });
 
-  console.log(
-    'Appointments:',
-    appointments.length,
-  );
 
   for (const appointment of appointments) {
     const appointmentTime =
@@ -56,26 +50,28 @@ async sendReminders() {
       (1000 * 60);
 
       if (
-  diffMinutes <= 30 &&
+  diffMinutes <= 60 &&
   diffMinutes > 0
 ) {
 
   let message: string;
     if (
-  appointment.tokenNumber !== null
+  appointment.schedulingType==SchedulingType.WAVE
 ) {
-message = `
-Reminder: You have an appointment with ${appointment.doctor.fullName} today.
-Reporting Time: ${appointment.startTime}
-Token Number: ${appointment.tokenNumber}
-`;
+message = [
+`Reminder: You have an appointment with ${appointment.doctor.fullName} today.`,
+`Reporting Time: ${appointment.startTime}`,
+`Token Number: ${appointment.tokenNumber}`
+].join("|")
 } else {
-  message = `
-Reminder: You have an appointment with ${appointment.doctor.fullName} today.
-Appointment Date: ${appointment.date}
-Appointment Time: ${appointment.startTime}
-`;
+message =[
+`Reminder: You have an appointment with ${appointment.doctor.fullName} today.`,
+`Appointment Date: ${appointment.date}`,
+`Appointment Time: ${appointment.startTime}`
+].join("|")
 }
+console.log(message)
+
   await this.notificationService
   .createNotification(
     appointment.patient,

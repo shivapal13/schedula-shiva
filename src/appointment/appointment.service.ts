@@ -75,9 +75,7 @@ async bookAppointment(
 const today = new Date();
 
 const todayDate =
-  today.toLocaleDateString(
-    'en-CA',
-  );
+  today.toLocaleDateString('en-CA');
 
 if (dto.date !== todayDate) {
   throw new BadRequestException(
@@ -128,20 +126,62 @@ const availabilities =
       dayOfWeek,
     },
   });
-
+if (availabilities.length==0) {
+  throw new BadRequestException(
+    'Doctor is unavailable today',
+  );
+}
 const availability =
   availabilities.find(
     (a) =>
       dto.startTime >= a.startTime &&
       dto.endTime <= a.endTime,
   );
-
+  
 if (!availability) {
   throw new BadRequestException(
     'Requested slot does not exist',
   );
 }
- 
+const consultationStart =
+  new Date(
+    `${dto.date}T${availability.startTime}:00`,
+  );
+
+const consultationEnd =
+  new Date(
+    `${dto.date}T${availability.endTime}:00`,
+  );
+  if (
+  consultationStart >= consultationEnd
+) {
+  throw new BadRequestException(
+    'Invalid consultation timings',
+  );
+}
+const bookingOpen =
+  new Date(
+    consultationStart.getTime() -
+      2 * 60 * 60 * 1000,
+  );
+const bookingClose =
+  new Date(
+    consultationEnd.getTime() -
+      1 * 60 * 60 * 1000,
+  );
+
+  const now = new Date();
+  if (now < bookingOpen) {
+  throw new BadRequestException(
+    'Booking window has not opened yet',
+  );
+}
+
+if (now > bookingClose) {
+  throw new BadRequestException(
+    'Booking window has closed for today',
+  );
+}
 let tokenNumber: number | undefined;
 
 if (

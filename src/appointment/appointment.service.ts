@@ -239,6 +239,7 @@ const appointment =
     doctor,
     patient,
     tokenNumber,
+    schedulingType:availability.schedulingType,
     status:
       AppointmentStatus.BOOKED,
   });

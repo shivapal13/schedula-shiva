@@ -10,12 +10,16 @@ import { UsersModule } from './users/users.module';
 import { AvailabilityModule } from './availability/availability.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { NotificationModule } from './notification/notification.module';
-
+import { ScheduleModule } from '@nestjs/schedule';
+import { ReminderService } from './reminder/reminder.service';
+import { ReminderModule } from './reminder/reminder.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true
     }),
+     ScheduleModule.forRoot(),
+     ReminderModule,
 
   TypeOrmModule.forRoot({
   type: 'postgres',

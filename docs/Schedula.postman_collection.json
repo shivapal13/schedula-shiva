@@ -1010,6 +1010,148 @@
         }
       },
       "response": []
+    },
+    {
+      "name": "NotificationbyId",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"doctorId\":2,\r\n  \"date\": \"2026-06-20\",\r\n  \"startTime\": \"11:15\",\r\n  \"endTime\": \"11:30\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/notifications/1/read",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "notifications",
+            "1",
+            "read"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CancelByDoctor",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/doctor/profile/appointments/7/cancel",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "doctor",
+            "profile",
+            "appointments",
+            "7",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Notification",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"doctorId\":2,\r\n  \"date\": \"2026-06-20\",\r\n  \"startTime\": \"11:15\",\r\n  \"endTime\": \"11:30\"\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/notifications",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "notifications"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ReadAllNotification",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/notifications/read-all",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "notifications",
+            "read-all"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "FetchAllUnreadNotification",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
     }
   ],
   "variable": [
